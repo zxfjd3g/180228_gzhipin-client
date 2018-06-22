@@ -3,26 +3,29 @@
 
  */
 import {combineReducers} from 'redux'
+import {AUTH_SUCCESS, ERROR_MSG} from './action-types'
 
-function xxx(state=0, action) {
+const initUser = {
+  username: '',
+  type: '',
+  msg: '' // 错误信息
+}
+function user(state=initUser, action) {
   switch (action.type) {
-
+    case AUTH_SUCCESS:
+      return action.data
+    case AUTH_SUCCESS:
+      // state.msg = action.data
+      return {...state, msg: action.data}
     default:
       return state
   }
 }
 
-function yyy(state={}, action) {
-  switch (action.type) {
 
-    default:
-      return state
-  }
-}
 
 // 向外暴露一个整合后产生的reducer
 export default combineReducers({
-  xxx,
-  yyy
+  user,
 })
-// 整合的reducer管理的状态: {xxx: 0, yyy: {}}
+// 整合的reducer管理的状态: {user: {}}

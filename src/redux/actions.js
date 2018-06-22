@@ -13,10 +13,10 @@ const authSuccess = (user) => ({type: AUTH_SUCCESS, data: user})
 const errorMsg = (msg) => ({type: ERROR_MSG, data: msg})
 
 // 注册的异步action
-export const register = ({username, password, type}) => {
+export const register = ({username, password,password2, type}) => {
   return dispatch => {
     // 执行异步ajax请求注册接口
-    reqRegister({username, password, type}).then(reponse => {
+    reqRegister({username, password, type}).then(response => {
       const result = response.data  // {code: 0/1: data/msg: ???}
       if(result.code===0) { // 注册成功
         const user = result.data
@@ -32,7 +32,7 @@ export const register = ({username, password, type}) => {
 export const login = (username, password) => {
   return dispatch => {
     // 执行异步ajax请求登陆接口
-    reqLogin(username, password).then(reponse => {
+    reqLogin(username, password).then(response => {
       const result = response.data  // {code: 0/1: data/msg: ???}
       if(result.code===0) { // 注册成功
         const user = result.data

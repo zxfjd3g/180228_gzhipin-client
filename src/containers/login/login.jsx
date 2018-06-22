@@ -11,8 +11,10 @@ import {
   Button
 } from 'antd-mobile'
 import {connect} from 'react-redux'
+import {Redirect} from 'react-router-dom'
 
 import Logo from '../../components/logo/logo'
+import {login} from '../../redux/actions'
 
 class Login extends Component {
   state = {
@@ -30,18 +32,26 @@ class Login extends Component {
     this.props.history.replace('/register')
   }
 
-  // 注册
+  // 登陆
   login = () => {
-    console.log(this.state)
+    const {username, password} = this.state
+    this.props.login(username, password)
   }
 
   render() {
+
+    const {redirectTo, msg} = this.props.user
+    if(redirectTo) {// 需要自动重定向
+      return <Redirect to={redirectTo}/>
+    }
+
     return (
       <div>
         <NavBar>硅谷直聘</NavBar>
         <Logo/>
         <WingBlank>
           <List>
+            {msg ? <p className='error-msg'>{msg}</p> : null}
             <InputItem
               placeholder='输入用户名'
               onChange={val => this.handleChange('username', val)}
@@ -67,4 +77,7 @@ class Login extends Component {
   }
 }
 
-export default connect()(Login)
+export default connect(
+  state => ({user: state.user}),
+  {login}
+)(Login)

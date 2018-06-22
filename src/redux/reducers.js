@@ -8,13 +8,15 @@ import {AUTH_SUCCESS, ERROR_MSG} from './action-types'
 const initUser = {
   username: '',
   type: '',
-  msg: '' // 错误信息
+  msg: '', // 错误信息
+  redirectTo: '', // 需要自动重定向的path
 }
 function user(state=initUser, action) {
+  // debugger
   switch (action.type) {
     case AUTH_SUCCESS:
-      return action.data
-    case AUTH_SUCCESS:
+      return {...action.data, redirectTo: '/'}
+    case ERROR_MSG:
       // state.msg = action.data
       return {...state, msg: action.data}
     default:

@@ -4,9 +4,10 @@
 函数的返回值是promise
  */
 import ajax from './ajax'
-
+// const BASE_URL = 'http://localhost:4000'
+const BASE_URL = ''
 // 请求登陆接口
-export const reqLogin = (username, password) => ajax('/login', {username, password}, 'POST')
+export const reqLogin = (username, password) => ajax(BASE_URL+'/login', {username, password}, 'POST')
 
 // 请求注册接口
-export const reqRegister = ({username, password, type}) => ajax('/register', {username, password, type}, 'POST')
+export const reqRegister = ({username, password, type}) => ajax(BASE_URL+'/register', {username, password, type}, 'POST')

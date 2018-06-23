@@ -4,6 +4,7 @@
  */
 import {combineReducers} from 'redux'
 import {AUTH_SUCCESS, ERROR_MSG} from './action-types'
+import {getRedirectPath} from '../utils'
 
 const initUser = {
   username: '',
@@ -15,7 +16,8 @@ function user(state=initUser, action) {
   // debugger
   switch (action.type) {
     case AUTH_SUCCESS:
-      return {...action.data, redirectTo: '/'}
+      const user = action.data
+      return {...user, redirectTo: getRedirectPath(user.type, user.header)}
     case ERROR_MSG:
       // state.msg = action.data
       return {...state, msg: action.data}
@@ -31,3 +33,5 @@ export default combineReducers({
   user,
 })
 // 整合的reducer管理的状态: {user: {}}
+
+

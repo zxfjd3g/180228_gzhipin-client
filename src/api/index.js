@@ -11,3 +11,6 @@ export const reqLogin = (username, password) => ajax(BASE_URL+'/login', {usernam
 
 // 请求注册接口
 export const reqRegister = ({username, password, type}) => ajax(BASE_URL+'/register', {username, password, type}, 'POST')
+
+// 更新用户接口
+export const reqUpdateUser = (user) => ajax(BASE_URL+'/update', user, 'POST')

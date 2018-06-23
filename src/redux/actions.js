@@ -3,14 +3,21 @@
 同步action(与type的个数一样)
 异步action(与异步ajax请求个数一样)
  */
-import {AUTH_SUCCESS, ERROR_MSG} from './action-types'
-import {reqLogin, reqRegister} from '../api'
+import {AUTH_SUCCESS, ERROR_MSG, RESET_USER, RECEIVE_USER} from './action-types'
+import {reqLogin, reqRegister, reqUpdateUser} from '../api'
 
 // 请求成功的同步action
 const authSuccess = (user) => ({type: AUTH_SUCCESS, data: user})
 
 // 请求失败的同步action
 const errorMsg = (msg) => ({type: ERROR_MSG, data: msg})
+
+// 接收用户的同步action
+const receiveUser = (user) => ({type: RECEIVE_USER, data: user})
+
+// 重置用户的同步action
+const resetUser = (msg) => ({type: RESET_USER, data: msg})
+
 
 // 注册的异步action
 export const register = ({username, password,password2, type}) => {
@@ -56,6 +63,20 @@ export const login = (username, password) => {
       dispatch(authSuccess(user)) // 分发一个成功同步action
     } else { // 注册失败
       dispatch(errorMsg(result.msg)) // 分发一个失败同步action
+    }
+  }
+}
+
+
+// 更新用户的异步action
+export const updateUser = (user) => {
+  return async dispatch => {
+    const response = await reqUpdateUser(user)
+    const result = response.data
+    if(result.code===0) {
+      dispatch(receiveUser(result.data))
+    } else {
+      dispatch(resetUser(result.msg))
     }
   }
 }

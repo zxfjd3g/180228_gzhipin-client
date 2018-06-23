@@ -76,5 +76,13 @@ class Register extends Component {
 
 export default connect(
   state => ({user: state.user}),
-  {register}
+
+  {register},
+  /*function (dispatch) {
+    return {
+      register (user) {
+        dispatch(register(user))
+      }
+    }
+  }*/
 )(Register)

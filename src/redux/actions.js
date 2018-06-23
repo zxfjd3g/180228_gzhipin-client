@@ -14,32 +14,41 @@ const errorMsg = (msg) => ({type: ERROR_MSG, data: msg})
 
 // 注册的异步action
 export const register = ({username, password,password2, type}) => {
-  return dispatch => {
+  return async dispatch => {
     // 执行异步ajax请求注册接口
-    reqRegister({username, password, type}).then(response => {
-      const result = response.data  // {code: 0/1: data/msg: ???}
-      if(result.code===0) { // 注册成功
-        const user = result.data
-        dispatch(authSuccess(user)) // 分发一个成功同步action
-      } else { // 注册失败
-        dispatch(errorMsg(result.msg)) // 分发一个失败同步action
-      }
-    })
+    // 以同步编码方式得到promise异步执行的结果
+    const response = await reqRegister({username, password, type})
+    const result = response.data  // {code: 0/1: data/msg: ???}
+    if(result.code===0) { // 注册成功
+      const user = result.data
+      dispatch(authSuccess(user)) // 分发一个成功同步action
+    } else { // 注册失败
+      dispatch(errorMsg(result.msg)) // 分发一个失败同步action
+    }
   }
 }
 
 // 登陆的异步action
 export const login = (username, password) => {
-  return dispatch => {
+  return async dispatch => {
     // 执行异步ajax请求登陆接口
-    reqLogin(username, password).then(response => {
-      const result = response.data  // {code: 0/1: data/msg: ???}
-      if(result.code===0) { // 注册成功
-        const user = result.data
-        dispatch(authSuccess(user)) // 分发一个成功同步action
-      } else { // 注册失败
-        dispatch(errorMsg(result.msg)) // 分发一个失败同步action
-      }
-    })
+    const response = await reqLogin(username, password)
+    const result = response.data  // {code: 0/1: data/msg: ???}
+    if(result.code===0) { // 注册成功
+      const user = result.data
+      dispatch(authSuccess(user)) // 分发一个成功同步action
+    } else { // 注册失败
+      dispatch(errorMsg(result.msg)) // 分发一个失败同步action
+    }
   }
 }
+
+/*
+async和await的作用?:
+  简化promise编码
+  使用同步编码实现异步流程
+哪里使用await?
+  在执行一个返回promise对象的函数的左侧(不是想得到promise, 最想得到异步执行的结果)
+哪里使用async?
+  使用了await所在的函数定义左侧
+ */

@@ -49,7 +49,18 @@
         收集表单输入数据: state/onChange/变量属性名
 
 # day02
-## 1. 注册/登陆后台处理
+
+## 1. 创建后台应用
+    1). 使用webstorm创建基于node+express的后台应用
+    2). 自定义测试路由
+    3). 使用nodemon库来实例自动重运行
+
+## 2. 使用mongoose操作数据库
+    1). 连接数据库
+    2). 定义schema和Model
+    3). 通过Model函数对象或Model的实例的方法对集合数据进行CRUD操作 
+    
+## 2. 注册/登陆后台处理
     1). models.js
         连接数据库: mongoose.connect(url)
         定义文档结构: schema
@@ -60,7 +71,7 @@
         登陆: 流程
         响应数据结构: {code: 0, data: user}, {code: 1, msg: 'xxx'}
     
-## 2. 注册/登陆前台处理
+## 3. 注册/登陆前台处理
     1). ajax
         ajax请求函数(通用): 使用axios库, 返回的是promise对象
         后台接口请求函数: 针对具体接口定义的ajax请求函数, 返回的是promise对象

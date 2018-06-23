@@ -14,7 +14,17 @@ const errorMsg = (msg) => ({type: ERROR_MSG, data: msg})
 
 // 注册的异步action
 export const register = ({username, password,password2, type}) => {
+  if(!username) {
+    return errorMsg('必须指定用户名')
+  } else if(!password) {
+    return errorMsg('必须指定密码')
+  }
+
   return async dispatch => {
+    if(password!==password2) {
+      dispatch(errorMsg('两个密码必须一致'))
+      return
+    }
     // 执行异步ajax请求注册接口
     // 以同步编码方式得到promise异步执行的结果
     const response = await reqRegister({username, password, type})
@@ -30,6 +40,13 @@ export const register = ({username, password,password2, type}) => {
 
 // 登陆的异步action
 export const login = (username, password) => {
+
+  if(!username) {
+    return errorMsg('必须指定用户名')
+  } else if(!password) {
+    return errorMsg('必须指定密码')
+  }
+
   return async dispatch => {
     // 执行异步ajax请求登陆接口
     const response = await reqLogin(username, password)

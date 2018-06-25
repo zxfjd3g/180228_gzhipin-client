@@ -94,7 +94,7 @@ class Main extends Component {
     const currentNav = navList.find(nav => nav.path===path)
     return (
       <div>
-        {currentNav ? <NavBar>{currentNav.title}</NavBar> : null}
+        {currentNav ? <NavBar className='stick-header'>{currentNav.title}</NavBar> : null}
 
         <Switch>
           <Route path='/dasheninfo' component={DashenInfo}/>

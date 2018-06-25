@@ -3,7 +3,7 @@
 
  */
 import {combineReducers} from 'redux'
-import {AUTH_SUCCESS, ERROR_MSG, RECEIVE_USER, RESET_USER} from './action-types'
+import {AUTH_SUCCESS, ERROR_MSG, RECEIVE_USER, RESET_USER, RECEIVE_USER_LIST} from './action-types'
 import {getRedirectPath} from '../utils'
 
 const initUser = {
@@ -30,11 +30,22 @@ function user(state=initUser, action) {
   }
 }
 
+const initUserList = []
+function userList(state=initUserList, action) {
+  switch (action.type) {
+    case RECEIVE_USER_LIST:
+      return action.data
+    default:
+      return state
+  }
+}
+
 
 
 // 向外暴露一个整合后产生的reducer
 export default combineReducers({
   user,
+  userList
 })
 // 整合的reducer管理的状态: {user: {}}
 

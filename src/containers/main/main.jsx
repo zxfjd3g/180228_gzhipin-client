@@ -82,9 +82,14 @@ class Main extends Component {
       return <Redirect to={getRedirectPath(user.type, user.header)}/>
     }
 
-
-
     const navList = this.navList
+    // 确定哪个nav需要隐藏(添加隐藏的标识属性)
+    if(user.type==='laoban') {
+      navList[1].hide = true
+    } else {
+      navList[0].hide = true
+    }
+
     // 得到当前导航
     const currentNav = navList.find(nav => nav.path===path)
     return (
@@ -101,7 +106,7 @@ class Main extends Component {
           <Route component={NotFound}/>
         </Switch>
 
-        {currentNav ?  <NavFooter/>: null}
+        {currentNav ?  <NavFooter navList={navList}/>: null}
       </div>
     )
   }

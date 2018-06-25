@@ -4,7 +4,7 @@
 异步action(与异步ajax请求个数一样)
  */
 import {AUTH_SUCCESS, ERROR_MSG, RESET_USER, RECEIVE_USER} from './action-types'
-import {reqLogin, reqRegister, reqUpdateUser} from '../api'
+import {reqLogin, reqRegister, reqUpdateUser, reqUser} from '../api'
 
 // 请求成功的同步action
 const authSuccess = (user) => ({type: AUTH_SUCCESS, data: user})
@@ -72,6 +72,19 @@ export const login = (username, password) => {
 export const updateUser = (user) => {
   return async dispatch => {
     const response = await reqUpdateUser(user)
+    const result = response.data
+    if(result.code===0) {
+      dispatch(receiveUser(result.data))
+    } else {
+      dispatch(resetUser(result.msg))
+    }
+  }
+}
+
+// 获取用户的异步action
+export const getUser = () => {
+  return async dispatch => {
+    const response = await reqUser()
     const result = response.data
     if(result.code===0) {
       dispatch(receiveUser(result.data))

@@ -60,7 +60,7 @@
     2). 定义schema和Model
     3). 通过Model函数对象或Model的实例的方法对集合数据进行CRUD操作 
     
-## 2. 注册/登陆后台处理
+## 3. 注册/登陆后台处理
     1). models.js
         连接数据库: mongoose.connect(url)
         定义文档结构: schema
@@ -71,7 +71,7 @@
         登陆: 流程
         响应数据结构: {code: 0, data: user}, {code: 1, msg: 'xxx'}
     
-## 3. 注册/登陆前台处理
+## 4. 注册/登陆前台处理
     1). ajax
         ajax请求函数(通用): 使用axios库, 返回的是promise对象
         后台接口请求函数: 针对具体接口定义的ajax请求函数, 返回的是promise对象
@@ -99,3 +99,28 @@
               state => ({user: state.user}),
               {action1, action2}
             )(UI组件)
+            
+# day03
+## 1. 注册/登陆前台处理
+    1). 动态计算成功后跳转的path: 设计工具函数
+    2). 前台表单验证: 在action中
+    
+## 2. 完善用户信息
+    1). 用户信息完善界面路由组件: 
+        组件: dashen-info/laoban-info/header-selector
+        界面: Navbar/List/Grid/InputItem/Button/TextareaItem
+        收集用户输入数据: onChange监听/state 
+        注册2级路由: 在main路由组件
+    2). 登陆/注册成功后的跳转路由计算
+        定义工具函数
+        计算逻辑分析
+    3). 后台路由处理: 更新用户信息
+    4). 前台接口请求函数
+    5). 前台redux
+        action-types
+        异步action/同步action
+        reducer
+    6). 前台组件
+        UI组件包装生成容器组件
+        读取状态数据
+        更新状态

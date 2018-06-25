@@ -14,3 +14,6 @@ export const reqRegister = ({username, password, type}) => ajax(BASE_URL+'/regis
 
 // 更新用户接口
 export const reqUpdateUser = (user) => ajax(BASE_URL+'/update', user, 'POST')
+
+// 获取当前用户
+export const reqUser = () => ajax(BASE_URL+'/user')

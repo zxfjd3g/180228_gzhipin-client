@@ -16,6 +16,7 @@ import Personal from '../personal/personal'
 import NotFound from '../../components/not-found/not-found'
 import {getUser} from '../../redux/actions'
 import NavFooter from '../../components/nav-footer/nav-footer'
+import Chat from '../chat/chat'
 
 import {getRedirectPath} from '../../utils'
 
@@ -103,6 +104,7 @@ class Main extends Component {
           <Route path='/laoban' component={Laoban}/>
           <Route path='/message' component={Message}/>
           <Route path='/personal' component={Personal}/>
+          <Route path='/chat/:userid' component={Chat}/>
           <Route component={NotFound}/>
         </Switch>
 

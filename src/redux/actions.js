@@ -4,7 +4,35 @@
 异步action(与异步ajax请求个数一样)
  */
 import {AUTH_SUCCESS, ERROR_MSG, RESET_USER, RECEIVE_USER, RECEIVE_USER_LIST} from './action-types'
-import {reqLogin, reqRegister, reqUpdateUser, reqUser, reqUserList} from '../api'
+import {reqLogin, reqRegister, reqUpdateUser, reqUser, reqUserList, reqChatMsgList} from '../api'
+import io from 'socket.io-client'
+// 连接服务器, 得到代表连接的socket对象
+const socket = io('ws://localhost:4000')
+
+
+function initSocketIO (userid) {
+  socket.on('receiveMsg', function (chatMsg) {
+    if(chatMsg.from===userid || chatMsg.to===userid) {
+      console.log('接收到一个需要显示的消息')
+    } else {
+      console.log('接收到一条与我无关消息')
+    }
+  })
+}
+
+/*
+获取当前用户相关的所有聊天信息的异步action
+ */
+async function getMsgList (userid) {
+  initSocketIO(userid)
+  const response = await reqChatMsgList()
+  const result = response.data
+  if(result.code===0) {
+    // {user: {}, chatMsgs: []}
+    console.log('获取得到当前用户的所有聊天相关信息', result.data)
+  }
+}
+
 
 // 请求成功的同步action
 const authSuccess = (user) => ({type: AUTH_SUCCESS, data: user})
@@ -41,6 +69,7 @@ export const register = ({username, password,password2, type}) => {
     const result = response.data  // {code: 0/1: data/msg: ???}
     if(result.code===0) { // 注册成功
       const user = result.data
+      getMsgList(user._id)
       dispatch(authSuccess(user)) // 分发一个成功同步action
     } else { // 注册失败
       dispatch(errorMsg(result.msg)) // 分发一个失败同步action
@@ -63,6 +92,7 @@ export const login = (username, password) => {
     const result = response.data  // {code: 0/1: data/msg: ???}
     if(result.code===0) { // 注册成功
       const user = result.data
+      getMsgList(user._id)
       dispatch(authSuccess(user)) // 分发一个成功同步action
     } else { // 注册失败
       dispatch(errorMsg(result.msg)) // 分发一个失败同步action
@@ -90,6 +120,7 @@ export const getUser = () => {
     const response = await reqUser()
     const result = response.data
     if(result.code===0) {
+      getMsgList(result.data._id)
       dispatch(receiveUser(result.data))
     } else {
       dispatch(resetUser(result.msg))
@@ -108,6 +139,19 @@ export const getUserList = (type) => {
     }
   }
 }
+
+
+// 发送消息的异步action
+export const sendMsg = ({from, to, content}) => {
+  return dispatch => {
+    // 向服务器发消息
+    console.log('浏览器向服务器发送消息', from, to, content)
+    socket.emit('sendMsg', {from, to, content})
+  }
+}
+
+
+
 
 /*
 async和await的作用?:

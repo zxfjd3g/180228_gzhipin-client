@@ -9,7 +9,9 @@ import io from 'socket.io-client'
 // 连接服务器, 得到代表连接的socket对象
 const socket = io('ws://localhost:4000')
 
-
+/*
+初始化socketio, 绑定监听接收服务器发送的消息
+ */
 function initSocketIO (userid) {
   socket.on('receiveMsg', function (chatMsg) {
     if(chatMsg.from===userid || chatMsg.to===userid) {

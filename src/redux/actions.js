@@ -3,8 +3,23 @@
 同步action(与type的个数一样)
 异步action(与异步ajax请求个数一样)
  */
-import {AUTH_SUCCESS, ERROR_MSG, RESET_USER, RECEIVE_USER, RECEIVE_USER_LIST} from './action-types'
-import {reqLogin, reqRegister, reqUpdateUser, reqUser, reqUserList, reqChatMsgList} from '../api'
+import {
+  AUTH_SUCCESS,
+  ERROR_MSG,
+  RECEIVE_USER,
+  RESET_USER,
+  RECEIVE_USER_LIST,
+  RECEIVE_MSG,
+  RECEIVE_CHAT,
+} from './action-types'
+import {
+  reqLogin,
+  reqRegister,
+  reqUpdateUser,
+  reqUser,
+  reqUserList,
+  reqChatMsgList
+} from '../api'
 import io from 'socket.io-client'
 // 连接服务器, 得到代表连接的socket对象
 const socket = io('ws://localhost:4000')
@@ -12,10 +27,11 @@ const socket = io('ws://localhost:4000')
 /*
 初始化socketio, 绑定监听接收服务器发送的消息
  */
-function initSocketIO (userid) {
+function initSocketIO (userid, dispatch) {
   socket.on('receiveMsg', function (chatMsg) {
     if(chatMsg.from===userid || chatMsg.to===userid) {
       console.log('接收到一个需要显示的消息')
+      dispatch(receiveMsg(chatMsg))
     } else {
       console.log('接收到一条与我无关消息')
     }
@@ -25,13 +41,14 @@ function initSocketIO (userid) {
 /*
 获取当前用户相关的所有聊天信息的异步action
  */
-async function getMsgList (userid) {
-  initSocketIO(userid)
+async function getMsgList (userid, dispatch) {
+  initSocketIO(userid, dispatch)
   const response = await reqChatMsgList()
   const result = response.data
   if(result.code===0) {
     // {user: {}, chatMsgs: []}
     console.log('获取得到当前用户的所有聊天相关信息', result.data)
+    dispatch(receiveChat(result.data))
   }
 }
 
@@ -50,6 +67,11 @@ export const resetUser = (msg) => ({type: RESET_USER, data: msg})
 
 // 接收用户列表的同步action
 const receiveUserList = (users) => ({type: RECEIVE_USER_LIST, data: users})
+
+// 接收聊天相关信息的同步action
+const receiveChat = ({users, chatMsgs}) => ({type: RECEIVE_CHAT, data: {users, chatMsgs}})
+// 接收一条新的聊天消息
+const receiveMsg = (chatMsg) => ({type: RECEIVE_MSG, data: chatMsg})
 
 
 // 注册的异步action
@@ -71,7 +93,7 @@ export const register = ({username, password,password2, type}) => {
     const result = response.data  // {code: 0/1: data/msg: ???}
     if(result.code===0) { // 注册成功
       const user = result.data
-      getMsgList(user._id)
+      getMsgList(user._id, dispatch)
       dispatch(authSuccess(user)) // 分发一个成功同步action
     } else { // 注册失败
       dispatch(errorMsg(result.msg)) // 分发一个失败同步action
@@ -94,7 +116,7 @@ export const login = (username, password) => {
     const result = response.data  // {code: 0/1: data/msg: ???}
     if(result.code===0) { // 注册成功
       const user = result.data
-      getMsgList(user._id)
+      getMsgList(user._id, dispatch)
       dispatch(authSuccess(user)) // 分发一个成功同步action
     } else { // 注册失败
       dispatch(errorMsg(result.msg)) // 分发一个失败同步action
@@ -122,7 +144,7 @@ export const getUser = () => {
     const response = await reqUser()
     const result = response.data
     if(result.code===0) {
-      getMsgList(result.data._id)
+      getMsgList(result.data._id, dispatch)
       dispatch(receiveUser(result.data))
     } else {
       dispatch(resetUser(result.msg))

@@ -25,32 +25,49 @@ class Chat extends Component {
   }
 
   render() {
+
+    const {user, chat} = this.props
+    const {users, chatMsgs} = chat
+    const targetId = this.props.match.params.userid
+    const meId = user._id
+    // 得到当前聊天的id
+    const chatId = [targetId, meId].sort().join('_')
+
+    // 对chatMsgs进行过滤(与目标用户的聊天记录)
+    const currentMsgs = chatMsgs.filter(msg => msg.chat_id===chatId)
+    // msg.to msg.from
+
+    const targetUser = users[targetId]
+    const targetIcon = targetUser.header ? require(`../../assets/imgs/${targetUser.header}.png`) : null
+
     return (
       <div id='chat-page'>
         <NavBar>aa</NavBar>
         <List>
-          <Item
-            thumb={require('../../assets/imgs/头像1.png')}
-          >
-            你好
-          </Item>
-          <Item
-            thumb={require('../../assets/imgs/头像1.png')}
-          >
-            你好2
-          </Item>
-          <Item
-            className='chat-me'
-            extra='我'
-          >
-            很好
-          </Item>
-          <Item
-            className='chat-me'
-            extra='我'
-          >
-            很好2
-          </Item>
+          {
+            currentMsgs.map((msg, index) => {
+              if(msg.to===meId) { // 对方发给我的
+                return (
+                  <Item
+                    key={index}
+                    thumb={targetIcon}
+                  >
+                    {msg.content}
+                  </Item>
+                )
+              } else { // 我发给对方的
+                return (
+                  <Item
+                    key={index}
+                    className='chat-me'
+                    extra='我'
+                  >
+                    {msg.content}
+                  </Item>
+                )
+              }
+            })
+          }
         </List>
 
         <div className='am-tab-bar'>
@@ -68,6 +85,6 @@ class Chat extends Component {
 }
 
 export default connect(
-  state => ({user: state.user}),
+  state => ({user: state.user, chat: state.chat}),
   {sendMsg}
 )(Chat)

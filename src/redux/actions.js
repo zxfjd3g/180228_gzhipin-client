@@ -30,14 +30,18 @@ const socket = io('ws://localhost:4000')
 初始化socketio, 绑定监听接收服务器发送的消息
  */
 function initSocketIO (userid, dispatch) {
-  socket.on('receiveMsg', function (chatMsg) {
-    if(chatMsg.from===userid || chatMsg.to===userid) {
-      console.log('接收到一个需要显示的消息')
-      dispatch(receiveMsg(chatMsg, userid))
-    } else {
-      console.log('接收到一条与我无关消息')
-    }
-  })
+  if(!io.socket) {
+    io.socket = socket
+    socket.on('receiveMsg', function (chatMsg) {
+      if(chatMsg.from===userid || chatMsg.to===userid) {
+        console.log('接收到一个需要显示的消息')
+        dispatch(receiveMsg(chatMsg, userid))
+      } else {
+        console.log('接收到一条与我无关消息')
+      }
+    })
+  }
+
 }
 
 /*

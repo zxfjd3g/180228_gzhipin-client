@@ -18,6 +18,9 @@ class Chat extends Component {
 
   send = () => {
     const {content} = this.state
+    if(!content) {
+      return
+    }
     const from = this.props.user._id
     const to = this.props.match.params.userid
     // 发送消息
@@ -114,6 +117,7 @@ class Chat extends Component {
         </List>
 
         <div className='am-tab-bar'>
+
           <InputItem
             placeholder="请输入"
             onChange={(val) => this.setState({content: val})}

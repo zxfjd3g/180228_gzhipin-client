@@ -142,3 +142,42 @@
         api
         redux
         component
+        
+# day05
+## 1. socket.io
+    实现实时聊天的库
+    包装的H5 WebSocket和轮询---> 兼容性/编码简洁性
+    包含2个包:
+      socket.io: 用于服务器端
+      socket.io-client: 用于客户端
+    基本思想: 远程自定义事件机制
+        on(name, function(data){}): 绑定监听
+        emit(name, data): 发送消息
+        
+        io: 服务器端核心的管理对象: 内部管理着n个连接对象(socket)
+        socket: 客户端与服务器的连接对象
+        
+## 2. 后台
+    models
+      添加操作chats集合的ChatModel
+    routes
+      获取当前用户的聊天消息列表: /msglist
+      修改指定消息为已读: /readmsg
+    socketio
+      接收浏览器客户发送的消息数据, 保存完成后, 发送给所有连接的浏览器
+## 3. 前台
+    api
+      reqChatMsgList()
+      reqReadChatMsg(from)
+    redux
+      异步获取消息列表
+      绑定接收新的聊天消息的监听
+      发送聊天消息给服务器
+      管理chat数据的reducer
+    组件
+      读取user/chat状态数据显示
+      发送聊天消息
+      对chatMsg进行过滤
+      实现自动滑动到底部显示
+      表情包功能
+      

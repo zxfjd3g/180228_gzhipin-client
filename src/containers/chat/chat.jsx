@@ -6,6 +6,7 @@ import React, {Component} from 'react'
 import {NavBar, List, InputItem, Icon, Grid} from 'antd-mobile'
 import {connect} from 'react-redux'
 import {sendMsg} from '../../redux/actions'
+import {updateMsg} from '../../redux/actions'
 
 const Item = List.Item
 
@@ -43,12 +44,22 @@ class Chat extends Component {
   componentDidMount() {
     // 初始显示列表
     window.scrollTo(0, document.body.scrollHeight)
+    /*const from = this.props.match.params.userid
+    const to = this.props.user._id
+    this.props.updateMsg(from, to)*/
   }
 
   // 更新后, 自动滚动到底部
   componentDidUpdate () {
     // 更新显示列表
     window.scrollTo(0, document.body.scrollHeight)
+  }
+
+  // 退出()死亡之前调用
+  componentWillUnmount() {
+    const from = this.props.match.params.userid
+    const to = this.props.user._id
+    this.props.updateMsg(from, to)
   }
 
   // 切换表情列表的显示
@@ -155,5 +166,5 @@ class Chat extends Component {
 
 export default connect(
   state => ({user: state.user, chat: state.chat}),
-  {sendMsg}
+  {sendMsg, updateMsg}
 )(Chat)

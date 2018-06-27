@@ -11,6 +11,7 @@ import {
   RECEIVE_USER_LIST,
   RECEIVE_MSG,
   RECEIVE_CHAT,
+  MSG_UPDATE
 } from './action-types'
 import {getRedirectPath} from '../utils'
 
@@ -51,15 +52,37 @@ function userList(state=initUserList, action) {
 const initChat = {
   users: {},  // 所有用户信息(username/header)的集合对象
   chatMsgs: [], // 当前用户相关(from/to)的所有聊天msg的数组
+  unReadCount: 0, // 总的未读数量
 }
 function chat(state=initChat, action) {
   switch (action.type) {
     case RECEIVE_CHAT:
-      return action.data
+      return {
+        users: action.data.users,
+        chatMsgs: action.data.chatMsgs,
+        unReadCount: action.data.chatMsgs.reduce((preTotal, msg) => { // 别人发给我的未读消息
+          return preTotal + (!msg.read && msg.to=== action.data.meId ? 1 : 0)
+        }, 0)
+      }
     case RECEIVE_MSG:
       return {
         users: state.users,
-        chatMsgs: [...state.chatMsgs, action.data]
+        chatMsgs: [...state.chatMsgs, action.data.chatMsg],
+        unReadCount: state.unReadCount + (action.data.chatMsg.to===action.data.meId ? 1 : 0)
+      }
+    case MSG_UPDATE:
+      const {from, to, count} = action.data
+      return {
+        users: state.users,
+        // 根据from, to在chatMsgs中找到所有对应的msg, 将read属性改为true
+        chatMsgs: state.chatMsgs.map(msg => {
+          if(msg.from===from && msg.to===to && !msg.read) {
+            return {...msg, read: true}
+          } else {
+            return msg
+          }
+        }),
+        unReadCount: state.unReadCount - count
       }
     default:
       return state

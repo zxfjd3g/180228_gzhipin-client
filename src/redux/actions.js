@@ -11,6 +11,7 @@ import {
   RECEIVE_USER_LIST,
   RECEIVE_MSG,
   RECEIVE_CHAT,
+  MSG_UPDATE
 } from './action-types'
 import {
   reqLogin,
@@ -18,7 +19,8 @@ import {
   reqUpdateUser,
   reqUser,
   reqUserList,
-  reqChatMsgList
+  reqChatMsgList,
+  reqReadChatMsg
 } from '../api'
 import io from 'socket.io-client'
 // 连接服务器, 得到代表连接的socket对象
@@ -31,7 +33,7 @@ function initSocketIO (userid, dispatch) {
   socket.on('receiveMsg', function (chatMsg) {
     if(chatMsg.from===userid || chatMsg.to===userid) {
       console.log('接收到一个需要显示的消息')
-      dispatch(receiveMsg(chatMsg))
+      dispatch(receiveMsg(chatMsg, userid))
     } else {
       console.log('接收到一条与我无关消息')
     }
@@ -48,7 +50,7 @@ async function getMsgList (userid, dispatch) {
   if(result.code===0) {
     // {user: {}, chatMsgs: []}
     console.log('获取得到当前用户的所有聊天相关信息', result.data)
-    dispatch(receiveChat(result.data))
+    dispatch(receiveChat({...result.data, meId: userid}))
   }
 }
 
@@ -69,9 +71,11 @@ export const resetUser = (msg) => ({type: RESET_USER, data: msg})
 const receiveUserList = (users) => ({type: RECEIVE_USER_LIST, data: users})
 
 // 接收聊天相关信息的同步action
-const receiveChat = ({users, chatMsgs}) => ({type: RECEIVE_CHAT, data: {users, chatMsgs}})
+const receiveChat = ({users, chatMsgs, meId}) => ({type: RECEIVE_CHAT, data: {users, chatMsgs, meId}})
 // 接收一条新的聊天消息
-const receiveMsg = (chatMsg) => ({type: RECEIVE_MSG, data: chatMsg})
+const receiveMsg = (chatMsg, meId) => ({type: RECEIVE_MSG, data: {chatMsg, meId}})
+
+const msgUpdate = ({count, from, to}) => ({type: MSG_UPDATE, data: {count, from, to}})
 
 
 // 注册的异步action
@@ -175,6 +179,18 @@ export const sendMsg = ({from, to, content}) => {
 }
 
 
+// 更新消息为已读
+export const updateMsg = (from, to) => {
+  return async dispatch => {
+    const response = await reqReadChatMsg(from)
+    const result = response.data // {code: 0, data: 2}
+    if(result.code===0) {
+      const count = result.data
+      dispatch(msgUpdate({count, from, to}))
+    }
+
+  }
+}
 
 
 /*
